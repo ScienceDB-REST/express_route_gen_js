@@ -1,0 +1,27 @@
+{
+  "name": "express_route_gen_js",
+  "version": "1.0.0",
+  "description": "Provides commands to auto-generate CRUD routes for models with Expressjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/asishallab/express_route_gen_js.git"
+  },
+  "keywords": [
+    "NodeJS",
+    "ExpressJS",
+    "CRUD",
+    "code",
+    "generation",
+    "Javascript"
+  ],
+  "author": "Dr. Asis Hallab <asis.hallab@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/asishallab/express_route_gen_js/issues"
+  },
+  "homepage": "https://github.com/asishallab/express_route_gen_js#readme"
+}
