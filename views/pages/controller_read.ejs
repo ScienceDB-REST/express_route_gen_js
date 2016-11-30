@@ -1,0 +1,6 @@
+// get all todos
+router.get('/todos', function(req, res) {
+  models.Todo.findAll({}).then(function(todos) {
+      res.json(todos);
+        });
+        });

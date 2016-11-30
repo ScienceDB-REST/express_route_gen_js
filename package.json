@@ -19,10 +19,11 @@
     "Javascript"
   ],
   "bin": {
-    "express_route_gen" : "./index.js"
+    "express_route_gen": "./index.js"
   },
   "dependencies": {
-    "ejs" : ">=2.5.2"
+    "ejs": ">=2.5.2",
+    "commander": "~2.9.0"
   },
   "author": "Dr. Asis Hallab <asis.hallab@gmail.com>",
   "license": "MIT",
