@@ -23,7 +23,8 @@
   },
   "dependencies": {
     "ejs": ">=2.5.2",
-    "commander": "~2.9.0"
+    "commander": "~2.9.0",
+    "inflection": "~1.10.0"
   },
   "author": "Dr. Asis Hallab <asis.hallab@gmail.com>",
   "license": "MIT",
