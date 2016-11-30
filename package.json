@@ -18,6 +18,12 @@
     "generation",
     "Javascript"
   ],
+  "bin": {
+    "express_route_gen" : "./index.js"
+  },
+  "dependencies": {
+    "ejs" : ">=2.5.2"
+  },
   "author": "Dr. Asis Hallab <asis.hallab@gmail.com>",
   "license": "MIT",
   "bugs": {
