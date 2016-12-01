@@ -25,6 +25,7 @@ program
             name: program.name,
             nameLc: program.name.toLowerCase(),
             namePl: inflection.pluralize(program.name),
+            namePlLc: inflection.pluralize(program.name).toLowerCase(),
             attributesArr: attributesArr
         }
         var routesDir = directory + '/server/routes';

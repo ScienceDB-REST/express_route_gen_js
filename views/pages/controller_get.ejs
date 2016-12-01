@@ -1,12 +1,12 @@
 // get all <%- namePl %>
-router.get('/<%- namePl %>', function(req, res) {
+router.get('/<%- namePlLc %>', function(req, res) {
   models.<%- name %>.findAll({}).then(function(<%- namePl %>) {
     res.json(<%- namePl %>);
   });
 });
 
 // get single <%- name %>
-router.get('<%- namePl %>/:id', function(req, res) {
+router.get('/<%- nameLc %>/:id', function(req, res) {
 	models.<%- name %>.find({
 		where: {
 			id: req.params.id

@@ -1,5 +1,5 @@
 // add new <%- name %>
-router.post('/<%- namePl -%>', function(req, res) {
+router.post('/<%- namePlLc -%>', function(req, res) {
     models.<%- name -%>.create({
 				<% include ../partials/set_attributes %>
     }).then(function(<%- name %>) {
