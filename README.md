@@ -13,3 +13,14 @@ Writes file `server/routes/todo_routes.js` with the standard routes for
 * PUT
 * DELETE
 requests.
+
+Help from the command line:
+<code>
+Usage: express_route_gen [options] <directory>
+
+  Options:
+
+    -h, --help                       output usage information
+    --name <model_name>              The name of the model as provided to 'sequelize model:create'.
+    --attributes <model_attributes>  The model attributes as provided to 'sequelize model:create'.
+</code>
