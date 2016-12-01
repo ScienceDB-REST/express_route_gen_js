@@ -1,0 +1,6 @@
+<% for ( i=0; i<attributesArr.length; i++ ) { -%>
+    <%- attributesArr[i][0] -%>: req.body.<%- attributesArr[i][0] -%>
+		<% if ( i < (attributesArr.length - 1 ) ) { -%>
+			,
+    <% } -%>
+<% } -%>

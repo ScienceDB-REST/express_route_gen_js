@@ -1,0 +1,10 @@
+// delete a single <%- nameLc %>
+router.delete('/<%- nameLc -%>/:id', function(req, res) {
+    models.<%- name -%>.destroy({
+        where: {
+            id: req.params.id
+        }
+    }).then(function(<%- nameLc -%>) {
+        res.json(<%- nameLc -%>);
+    });
+});

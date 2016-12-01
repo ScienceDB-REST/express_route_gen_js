@@ -1,24 +1,47 @@
 #!/usr/bin/env nodejs
-console.log( "Hello, world!" )
 
-var ejs = require( 'ejs' )
-var inflection = require( 'inflection' );
+// Required packages:
+ejs = require('ejs');
+inflection = require('inflection');
+fs = require('fs');
+jsb = require('js-beautify').js_beautify;
+exprRouteGenPath = __dirname;
+generateJs = require(exprRouteGenPath + '/funks.js').generateJs;
+program = require('commander');
 
-// Parse command-line-arguments:
-var program = require('commander');
+
+// Parse command-line-arguments and execute:
 program
-.arguments('<directory>')
-.option('--name <model_name>', 'The name of the model as provided to \'sequelize model:create\'.')
-.option('--attributes <model_attributes>', 'The model attributes as provided to \'sequelize model:create\'.')
-.action(function(directory) {
-  console.log('directory: %s name: %s attributes: %s',
-      directory, program.name, program.attributes);
-  ejs.renderFile( 'views/pages/controller_read.ejs', {
-    name: program.name,
-    namePl: inflection.pluralize( program.name ),
-    attributes: program.attributes
-  }, {}, function( err, str ) {
-   console.log(str) 
-  } )
-})
-.parse(process.argv);
+    .arguments('<directory>')
+    .option('--name <model_name>', 'The name of the model as provided to \'sequelize model:create\'.')
+    .option('--attributes <model_attributes>', 'The model attributes as provided to \'sequelize model:create\'.')
+    .action(function(directory) {
+        console.log('directory: %s name: %s attributes: %s',
+            directory, program.name, program.attributes);
+        var attributesArr = program.attributes.trim().split(',').map(function(x) {
+            return x.trim().split(':')
+        });
+        var opts = {
+            name: program.name,
+            nameLc: program.name.toLowerCase(),
+            namePl: inflection.pluralize(program.name),
+            attributesArr: attributesArr
+        }
+        var routesDir = directory + '/server/routes';
+        var routesFl = routesDir + '/' + opts.nameLc + '_routes.js';
+        var contrJs = '';
+        // GET requests
+        contrJs += '\n' + generateJs('controller_get', opts);
+        // POST requests
+        contrJs += '\n' + generateJs('controller_post', opts);
+        // PUT requests
+        contrJs += '\n' + generateJs('controller_put', opts);
+        // DELETE requests
+        contrJs += '\n' + generateJs('controller_delete', opts);
+        // Output:
+        fs.writeFile(routesFl, contrJs, function(err) {
+            if (err)
+                return console.log(err);
+            console.log("Wrote routes into '%s'.", routesFl);
+        });
+    }).parse(process.argv);

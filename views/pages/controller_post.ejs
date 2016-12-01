@@ -1,0 +1,8 @@
+// add new <%- name %>
+router.post('/<%- namePl -%>', function(req, res) {
+    models.<%- name -%>.create({
+				<% include ../partials/set_attributes %>
+    }).then(function(<%- name %>) {
+        res.json(<%- name -%>);
+    });
+});

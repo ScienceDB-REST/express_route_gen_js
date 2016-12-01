@@ -24,7 +24,9 @@
   "dependencies": {
     "ejs": ">=2.5.2",
     "commander": "~2.9.0",
-    "inflection": "~1.10.0"
+    "inflection": "~1.10.0",
+    "underscore": ">=1.8.3",
+    "js-beautify": ">=1.6.4"
   },
   "author": "Dr. Asis Hallab <asis.hallab@gmail.com>",
   "license": "MIT",
