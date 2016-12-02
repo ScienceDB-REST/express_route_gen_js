@@ -3,7 +3,8 @@
 // Required packages:
 ejs = require('ejs');
 inflection = require('inflection');
-fs = require('fs');
+fs = require('fs-extra');
+path = require('path');
 jsb = require('js-beautify').js_beautify;
 exprRouteGenPath = __dirname;
 generateJs = require(exprRouteGenPath + '/funks.js').generateJs;
@@ -30,6 +31,7 @@ program
         }
         var routesDir = directory + '/server/routes';
         var routesFl = routesDir + '/' + opts.nameLc + '_routes.js';
+        var routesHelperFl = routesDir + '/' + 'helper.js';
         var contrJs = '';
         // GET requests
         contrJs += '\n' + generateJs('controller_get', opts);
@@ -45,4 +47,8 @@ program
                 return console.log(err);
             console.log("Wrote routes into '%s'.", routesFl);
         });
+        // Copy helper functions into target project to enable editing, if
+        // wanted:
+        if (!path.existsSync(routesHelperFl))
+            fs.copySync(path.resolve(__dirname, 'helper.js'), routesHelperFl);
     }).parse(process.argv);

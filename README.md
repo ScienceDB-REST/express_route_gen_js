@@ -32,6 +32,7 @@ Usage: express_route_gen [options] <directory>
 // files to use these imports:
 express = require('express');
 models = require('../models/index');
+helper = require(__dirname + '/helper.js');
 router = express.Router();
 var glob = require('glob'),
     path = require('path');
