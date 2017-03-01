@@ -27,7 +27,9 @@
     "inflection": "~1.10.0",
     "underscore": ">=1.8.3",
     "js-beautify": ">=1.6.4",
-    "fs-extra": "~1.0.0"
+    "fs-extra": "~1.0.0",
+    "object-assign": "~4.1.1",
+    "array-unique": "~0.3.2"
   },
   "author": "Dr. Asis Hallab <asis.hallab@gmail.com>",
   "license": "MIT",

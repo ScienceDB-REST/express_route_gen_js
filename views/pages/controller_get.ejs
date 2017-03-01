@@ -1,7 +1,7 @@
 // get all <%- namePl %>
 router.get('/<%- namePlLc %>', function(req, res) {
     models.
-    <%- name %>.findAll(helper.paginate(req)).then(function(<%- namePl %>) {
+    <%- name %>.findAll(helper.searchPaginate(req, <%- JSON.stringify(typeAttributes['string'] || []) %>)).then(function(<%- namePl %>) {
         res.json(<%- namePl %>);
     });
 });
