@@ -1,19 +1,30 @@
 // get all <%- namePl %>
 router.get('/<%- namePlLc %>', function(req, res) {
-    models.
-    <%- name %>.findAll(helper.searchPaginate(req, <%- JSON.stringify(typeAttributes['string'] || []) %>)).then(function(<%- namePl %>) {
-        res.json(<%- namePl %>);
-    });
+  models.
+  <%- name %>.findAll(helper.searchPaginate(req,
+    <%- JSON.stringify(typeAttributes['string'] || []) %>)).then(function(
+    <%- namePl %>) {
+    res.json(<%- namePl %>);
+  });
 });
 
 // get single <%- name %>
 router.get('/<%- nameLc %>/:id', function(req, res) {
-    models.
-    <%- name %>.find({
-        where: {
-            id: req.params.id
-        }
-    }).then(function(x) {
-        res.json(x);
-    });
+  models.
+  <%- name %>.find({
+    where: {
+      id: req.params.id
+    }
+  }).then(function(x) {
+    res.json(x);
+  });
 });
+
+// get example CSV for subsequent bulk create
+router.get('/<%- namePlLc %>/example_csv', function(req, res) {
+  tmpCsv = tmp.fileSync();
+  helper.modelCsvExample(tmpCsv.name, models.
+    <%- name %>)
+  res.sendFile(tmpCsv)
+  console.log("TMP-CSV: " + tmpCsv.name)
+})
