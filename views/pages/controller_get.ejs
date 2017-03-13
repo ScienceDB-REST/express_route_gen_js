@@ -22,9 +22,9 @@ router.get('/<%- nameLc %>/:id', function(req, res) {
 
 // get example CSV for subsequent bulk create
 router.get('/<%- namePlLc %>/example_csv', function(req, res) {
-  tmpCsv = tmp.fileSync();
-  helper.modelCsvExample(tmpCsv.name, models.
-    <%- name %>)
-  res.sendFile(tmpCsv)
-  console.log("TMP-CSV: " + tmpCsv.name)
+  helper.modelCsvExample(models.
+    <%- name %>).then(function(modelCsvArr) {
+    res.csv(modelCsvArr)
+  })
 })
+

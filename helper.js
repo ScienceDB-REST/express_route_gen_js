@@ -54,22 +54,22 @@ exports.filterModelAttributesForCsv = function(model, discardAttrs) {
   })
 }
 
-exports.modelCsvExample = function(csvFile, model, discardAttrs) {
+
+exports.modelCsvExample = function(model, discardAttrs) {
   return exports.filterModelAttributesForCsv(model,
     discardAttrs).then(function(x) {
-    csvMap = {}
+    csvHeader = []
+    csvExmplRow = []
     x.forEach(function(i) {
       csvStr = i.data_type
       if (i.is_nullable.toLowerCase() === 'false' || i.is_nullable.toLowerCase() ===
         'no' || i.is_nullable === 0)
-          csvStr += ",required"
+        csvStr += ",required"
       if (i.column_default)
         csvStr += ",default:" + i.column_default
-      csvMap[i.column_name] = csvStr
+      csvHeader = csvHeader.concat([i.column_name])
+      csvExmplRow = csvExmplRow.concat([csvStr])
     })
-    var writer = csvWriter()
-    writer.pipe(fs.createWriteStream(csvFile))
-    writer.write(csvMap)
-    writer.end()
+    return [csvHeader, csvExmplRow]
   })
 }
