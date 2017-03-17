@@ -73,3 +73,22 @@ exports.modelCsvExample = function(model, discardAttrs) {
     return [csvHeader, csvExmplRow]
   })
 }
+
+exports.csvRowToMap = function(csvHeader, csvRow) {
+  csvMap = {}
+  for (var i = 0, len = csvHeader.length; i < len; i++) {
+    csvMap[csvHeader[i]] = csvRow[i]
+  }
+  return csvMap
+}
+
+exports.parseCsv = function(csvStr) {
+  csvRows = csvStr.split(/\n|\r/)
+  csvHeader = csvRows[0].split(/,/)
+  csvMaps = []
+  for (var i = 1, len = csvRows.length; i < len; i++) {
+    csvMaps = csvMaps.concat([exports.csvRowToMap(csvHeader, csvRows[i].split(
+      /,/))])
+  }
+  return csvMaps
+}

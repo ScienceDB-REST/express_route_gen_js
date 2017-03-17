@@ -1,3 +1,6 @@
+//
+// POST REQUESTS
+//
 // add new <%- name %>
 router.post('/<%- namePlLc -%>', function(req, res) {
     models.<%- name -%>.create({
@@ -5,4 +8,16 @@ router.post('/<%- namePlLc -%>', function(req, res) {
     }).then(function(<%- name %>) {
         res.json(<%- name -%>);
     });
+});
+
+// bulk create <%- namePl %> from uploaded CSV or Excel file
+router.post('/<%- namePlLc -%>/upload_csv', function(req, res) {
+  csvObjs = helper.parseCsv(req.files.csv_file.data.toString())
+  asyncJobs = []
+  for (var i = 0, len = csvObjs.length; i < len; i++) {
+    asyncJobs.push(models.animal.create(csvObjs[i]))
+  }
+  Promise.all(asyncJobs).then(function(createdModels) {
+    res.json(createdModels)
+  })
 });

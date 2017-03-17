@@ -1,3 +1,6 @@
+//
+// GET REQUESTS
+//
 // get all <%- namePl %>
 router.get('/<%- namePlLc %>', function(req, res) {
   models.
@@ -27,4 +30,3 @@ router.get('/<%- namePlLc %>/example_csv', function(req, res) {
     res.csv(modelCsvArr)
   })
 })
-
