@@ -13,7 +13,7 @@ exports.generateJs = function(templateName, options) {
 // Parse input 'attributes' argument into array of arrays:
 // [ [ 'name':'string' ], [ 'is_human':'boolean' ] ]
 exports.attributesArray = function(attributesStr) {
-  return attributesStr.trim().split(/,|\s+/).map(function(x) {
+  return attributesStr.trim().split(/[\s,]+/).map(function(x) {
     return x.trim().split(':')
   });
 }

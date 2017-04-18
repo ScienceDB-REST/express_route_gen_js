@@ -1,33 +1,52 @@
 const objectAssign = require('object-assign');
-var csvWriter = require('csv-write-stream');
-var fs = require('fs-extra');
+const math = require('mathjs');
 
 var exports = module.exports = {};
 
 exports.paginate = function(req) {
   selectOpts = {}
-  if (req.query.limit) selectOpts['limit'] = req.query.limit
-  if (req.query.offset) selectOpts['offset'] = req.query.offset
+  if (req.query.per_page) selectOpts['limit'] = req.query.per_page
+  if (req.query.page) {
+    os = (req.query.page - 1) * selectOpts['limit']
+    selectOpts['offset'] = os
+  }
   return selectOpts
+}
+
+exports.sort = function(req) {
+  sortOpts = {}
+  if (req.query.sort) {
+    sortOpts = {
+      order: [req.query.sort.split('|')]
+    }
+  }
+  return sortOpts
 }
 
 exports.search = function(req, strAttributes) {
   selectOpts = {}
-  if (req.query.search) {
-    whereClause = {}
+  if (req.query.filter) {
+    fieldClauses = []
     strAttributes.forEach(function(x) {
-      whereClause[x] = {
-        $like: "%" + req.query.search + "%"
+      fieldWhereClause = {}
+      fieldWhereClause[x] = {
+        $like: "%" + req.query.filter + "%"
       }
+      fieldClauses = fieldClauses.concat([fieldWhereClause])
     })
-    selectOpts['where'] = whereClause
+    selectOpts['where'] = {
+      $or: fieldClauses
+    }
   }
   return selectOpts;
 }
 
 exports.searchPaginate = function(req, strAttributes) {
-  return objectAssign(exports.search(req, strAttributes), exports.paginate(
-    req));
+  return objectAssign(
+    exports.search(req, strAttributes),
+    exports.sort(req),
+    exports.paginate(req)
+  );
 }
 
 exports.modelAttributes = function(model) {
@@ -87,8 +106,54 @@ exports.parseCsv = function(csvStr) {
   csvHeader = csvRows[0].split(/,/)
   csvMaps = []
   for (var i = 1, len = csvRows.length; i < len; i++) {
-    csvMaps = csvMaps.concat([exports.csvRowToMap(csvHeader, csvRows[i].split(
-      /,/))])
+    csvMaps = csvMaps.concat([exports.csvRowToMap(csvHeader,
+      csvRows[i].split(
+        /,/))])
   }
   return csvMaps
+}
+
+exports.requestedUrl = function(req) {
+  var port = req.app.settings.port || cfg.port;
+  return req.protocol + '://' + req.hostname +
+    (port == 80 || port == 443 ? '' : ':' + port) +
+    req.path;
+}
+
+exports.prevNextPageUrl = function(req, isPrevious) {
+  baseUrl = exports.requestedUrl(req).replace(/\?.*$/, '')
+  query = []
+  i = isPrevious ? -1 : 1
+  // page
+  p = req.query.page == '1' ? null : (req.query.page + i)
+  query = query.concat(['page=' + p])
+  // per_page
+  query = query.concat(['per_page=' + (req.query.per_page || 20)])
+  // filter
+  if (req.query.filter) query = query.concat(['filter=' + req.query.filter])
+  // sort
+  if (req.query.sort) query = query.concat(['sort=' + req.query.sort])
+  // Append query to base URL
+  if (query.length > 0) baseUrl += "?" + query.join("&")
+  return baseUrl
+}
+
+exports.vueTable = function(req, model, strAttributes) {
+  return model.findAll(exports.searchPaginate(req, strAttributes)).then(
+    function(x) {
+      lastPage = math.ceil(x.length / req.query.per_page)
+      return {
+        data: x,
+        total: x.length,
+        per_page: req.query.per_page,
+        current_page: req.query.page,
+        'from': (req.query.page - 1) * req.query.per_page + 1,
+        'to': req.query.page * req.query.per_page,
+        last_page: lastPage,
+        prev_page_url: (req.query.page == 1) ? null : exports.prevNextPageUrl(
+          req, true),
+        next_page_url: (req.query.page == lastPage) ? null : exports.prevNextPageUrl(
+          req, false)
+      }
+    })
 }

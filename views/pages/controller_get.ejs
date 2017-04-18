@@ -30,3 +30,13 @@ router.get('/<%- namePlLc %>/example_csv', function(req, res) {
     res.csv(modelCsvArr)
   })
 })
+
+// get for vue-table
+router.get('/<%- namePlLc %>/vue_table', function(req, res) {
+  helper.vueTable(req, models.
+    <%- name%>,
+    <%- JSON.stringify(typeAttributes['string'] || []) %>).then(
+    function(x) {
+      res.json(x)
+    })
+});

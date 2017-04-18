@@ -22,16 +22,16 @@
     "express_route_gen": "./index.js"
   },
   "dependencies": {
-    "ejs": ">=2.5.2",
-    "commander": "~2.9.0",
-    "inflection": "~1.10.0",
-    "underscore": ">=1.8.3",
-    "js-beautify": ">=1.6.4",
-    "fs-extra": "~1.0.0",
-    "object-assign": "~4.1.1",
     "array-unique": "~0.3.2",
+    "commander": "~2.9.0",
     "csv-write-stream": "~2.0.0",
-    "express-csv": "~0.6.0"
+    "ejs": ">=2.5.2",
+    "express-csv": "~0.6.0",
+    "fs-extra": "~1.0.0",
+    "inflection": "~1.10.0",
+    "js-beautify": ">=1.6.4",
+    "object-assign": "~4.1.1",
+    "underscore": ">=1.8.3"
   },
   "author": "Dr. Asis Hallab <asis.hallab@gmail.com>",
   "license": "MIT",
