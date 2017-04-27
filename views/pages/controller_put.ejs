@@ -2,7 +2,7 @@
 // PUT REQUESTS
 //
 // update single <%- nameLc %>
-router.put('/<%- nameLc -%>/:id', function(req, res) {
+router.put('/<%- nameLc -%>/:id', <% include ../partials/acl_middleware %> function(req, res) {
     models.<%- name -%>.find({
         where: {
             id: req.params.id

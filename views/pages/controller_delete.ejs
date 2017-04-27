@@ -2,7 +2,7 @@
 // DELETE REQUESTS
 //
 // delete a single <%- nameLc %>
-router.delete('/<%- nameLc -%>/:id', function(req, res) {
+router.delete('/<%- nameLc -%>/:id', <% include ../partials/acl_middleware %> function(req, res) {
     models.<%- name -%>.destroy({
         where: {
             id: req.params.id

@@ -18,16 +18,20 @@ program
     'The name of the model as provided to \'sequelize model:create\'.')
   .option('--attributes <model_attributes>',
     'The model attributes as provided to \'sequelize model:create\'.')
+  .option('--acl <number_of_path_components n>',
+    'If and only if this argument is provided the snippet "acl.middleware(n)" will be used to provide authorization guards with the package "acl".'
+  )
   .action(function(directory) {
-    console.log('directory: %s name: %s attributes: %s',
-      directory, program.name, program.attributes);
+    console.log('directory: %s name: %s attributes: %s acl: %i',
+      directory, program.name, program.attributes, program.acl);
     var opts = {
       name: program.name,
       nameLc: program.name.toLowerCase(),
       namePl: inflection.pluralize(program.name),
       namePlLc: inflection.pluralize(program.name).toLowerCase(),
       attributesArr: funks.attributesArray(program.attributes),
-      typeAttributes: funks.typeAttributes(funks.attributesArray(program.attributes))
+      typeAttributes: funks.typeAttributes(funks.attributesArray(program.attributes)),
+      acl: ( program.acl || 0 )
     }
     var routesDir = directory + '/server/routes';
     var routesFl = routesDir + '/' + opts.nameLc + '_routes.js';
