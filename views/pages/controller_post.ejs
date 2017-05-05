@@ -7,7 +7,9 @@ router.post('/<%- namePlLc -%>', <% include ../partials/acl_middleware %> functi
 				<% include ../partials/set_attributes %>
     }).then(function(<%- name %>) {
         res.json(<%- name -%>);
-    });
+    }).catch(function(err) {
+        res.json(err)
+    })
 });
 
 // bulk create <%- namePl %> from uploaded CSV or Excel file
@@ -19,5 +21,21 @@ router.post('/<%- namePlLc -%>/upload_csv', <% include ../partials/acl_middlewar
   }
   Promise.all(asyncJobs).then(function(createdModels) {
     res.json(createdModels)
+  }).catch(function(err) {
+    res.json(err)
+  })
+});
+
+// bulk create <%- namePl %> from uploaded xlsx or Excel file
+router.post('/<%- namePlLc -%>/upload_xlsx', <% include ../partials/acl_middleware %> function(req, res) {
+  xlsxObjs = helper.parseXlsx(req.files.xlsx_file.data.toString('binary'))
+  asyncJobs = []
+  for (var i = 0, len = xlsxObjs.length; i < len; i++) {
+    asyncJobs.push(models.<%- name -%>.create(xlsxObjs[i]))
+  }
+  Promise.all(asyncJobs).then(function(createdModels) {
+    res.json(createdModels)
+  }).catch(function(err) {
+    res.json(err)
   })
 });

@@ -1,5 +1,6 @@
 const objectAssign = require('object-assign');
 const math = require('mathjs');
+const XLSX = require('xlsx');
 
 var exports = module.exports = {};
 
@@ -103,14 +104,22 @@ exports.csvRowToMap = function(csvHeader, csvRow) {
 
 exports.parseCsv = function(csvStr) {
   csvRows = csvStr.split(/\n|\r/)
-  csvHeader = csvRows[0].split(/,/)
+  csvHeader = csvRows[0].split(/\t|,/)
   csvMaps = []
   for (var i = 1, len = csvRows.length; i < len; i++) {
     csvMaps = csvMaps.concat([exports.csvRowToMap(csvHeader,
       csvRows[i].split(
-        /,/))])
+        /\t|,/))])
   }
   return csvMaps
+}
+
+exports.parseXlsx = function(bstr) {
+  var workbook = XLSX.read(bstr, {
+    type: "binary"
+  });
+  var sheet_name_list = workbook.SheetNames;
+  return XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
 }
 
 exports.requestedUrl = function(req) {
