@@ -12,7 +12,7 @@ router.post('/<%- namePlLc -%>', <% include ../partials/acl_middleware %> functi
     })
 });
 
-// bulk create <%- namePl %> from uploaded CSV or Excel file
+// bulk create <%- namePl %> from uploaded CSV file
 router.post('/<%- namePlLc -%>/upload_csv', <% include ../partials/acl_middleware %> function(req, res) {
   csvObjs = helper.parseCsv(req.files.csv_file.data.toString())
   asyncJobs = []
@@ -26,7 +26,7 @@ router.post('/<%- namePlLc -%>/upload_csv', <% include ../partials/acl_middlewar
   })
 });
 
-// bulk create <%- namePl %> from uploaded xlsx or Excel file
+// bulk create <%- namePl %> from uploaded xlsx Excel file
 router.post('/<%- namePlLc -%>/upload_xlsx', <% include ../partials/acl_middleware %> function(req, res) {
   xlsxObjs = helper.parseXlsx(req.files.xlsx_file.data.toString('binary'))
   asyncJobs = []
