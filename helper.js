@@ -1,6 +1,7 @@
 const objectAssign = require('object-assign');
 const math = require('mathjs');
 const XLSX = require('xlsx');
+const parse_csv = require('parse-csv');
 
 var exports = module.exports = {};
 
@@ -94,24 +95,15 @@ exports.modelCsvExample = function(model, discardAttrs) {
   })
 }
 
-exports.csvRowToMap = function(csvHeader, csvRow) {
-  csvMap = {}
-  for (var i = 0, len = csvHeader.length; i < len; i++) {
-    csvMap[csvHeader[i]] = csvRow[i]
-  }
-  return csvMap
-}
-
-exports.parseCsv = function(csvStr) {
-  csvRows = csvStr.split(/\n|\r/)
-  csvHeader = csvRows[0].split(/\t|,/)
-  csvMaps = []
-  for (var i = 1, len = csvRows.length; i < len; i++) {
-    csvMaps = csvMaps.concat([exports.csvRowToMap(csvHeader,
-      csvRows[i].split(
-        /\t|,/))])
-  }
-  return csvMaps
+exports.parseCsv = function(csvStr, delim) {
+  if (!delim) delim = "\t"
+  return parse_csv(csvStr, {
+    delimiter: delim
+  }, function(err, output) {
+    if (err)
+      return err
+    return output
+  })
 }
 
 exports.parseXlsx = function(bstr) {
