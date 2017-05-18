@@ -1,7 +1,8 @@
 const objectAssign = require('object-assign');
 const math = require('mathjs');
 const XLSX = require('xlsx');
-const parse_csv = require('parse-csv');
+const Promise = require('bluebird');
+const csv_parse = Promise.promisify(require('csv-parse'));
 
 var exports = module.exports = {};
 
@@ -95,15 +96,13 @@ exports.modelCsvExample = function(model, discardAttrs) {
   })
 }
 
-exports.parseCsv = function(csvStr, delim) {
-  if (!delim) delim = "\t"
-  return parse_csv(csvStr, {
-    delimiter: delim
-  }, function(err, output) {
-    if (err)
-      return err
-    return output
-  })
+exports.parseCsv = function(csvStr, delim, cols) {
+    if (!delim) delim = ","
+    if (typeof cols === 'undefined') cols = true
+    return csv_parse(csvStr, {
+      delimiter: delim,
+      columns: cols
+    })
 }
 
 exports.parseXlsx = function(bstr) {

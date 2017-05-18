@@ -14,15 +14,20 @@ router.post('/<%- namePlLc -%>', <% include ../partials/acl_middleware %> functi
 
 // bulk create <%- namePl %> from uploaded CSV file
 router.post('/<%- namePlLc -%>/upload_csv', <% include ../partials/acl_middleware %> function(req, res) {
-    csvObjs = helper.parseCsv(req.files.csv_file.data.toString())
-    models.<%- name -%>.bulkCreate(
-      csvObjs, {
-        validate: true
-      })
-      .catch(function(err) {
-        res.json(err)
-      })
-  });
+  delim = req.body.delim
+  cols = req.body.cols
+  helper.parseCsv(req.files.csv_file.data.toString(), delim, cols).then(
+    function(data) {
+      models.marker.bulkCreate(
+          data, {
+            validate: true
+        }).then(function(data) {
+          res.json(data)
+        }).catch(function(err) {
+          res.json(err)
+        })
+    })
+});
 
 // bulk create <%- namePl %> from uploaded xlsx Excel file
 router.post('/<%- namePlLc -%>/upload_xlsx', <% include ../partials/acl_middleware %> function(req, res) {
