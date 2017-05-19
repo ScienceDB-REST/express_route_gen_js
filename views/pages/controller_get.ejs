@@ -8,7 +8,9 @@ router.get('/<%- namePlLc %>', <% include ../partials/acl_middleware %> function
     <%- JSON.stringify(typeAttributes['string'] || []) %>)).then(function(
     <%- namePl %>) {
     res.json(<%- namePl %>);
-  });
+  }).catch(function(err) {
+    res.json(err)
+  })
 });
 
 // get single <%- name %>
@@ -20,7 +22,9 @@ router.get('/<%- nameLc %>/:id', <% include ../partials/acl_middleware %> functi
     }
   }).then(function(x) {
     res.json(x);
-  });
+  }).catch(function(err) {
+    res.json(err)
+  })
 });
 
 // get example CSV for subsequent bulk create
@@ -38,5 +42,7 @@ router.get('/<%- namePlLc %>/vue_table', <% include ../partials/acl_middleware %
     <%- JSON.stringify(typeAttributes['string'] || []) %>).then(
     function(x) {
       res.json(x)
+    }).catch(function(err) {
+      res.json(err)
     })
 });

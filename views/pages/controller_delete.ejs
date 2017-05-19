@@ -9,5 +9,7 @@ router.delete('/<%- nameLc -%>/:id', <% include ../partials/acl_middleware %> fu
         }
     }).then(function(<%- nameLc -%>) {
         res.json(<%- nameLc -%>);
-    });
+    }).catch(function(err) {
+        res.json(err)
+    })
 });

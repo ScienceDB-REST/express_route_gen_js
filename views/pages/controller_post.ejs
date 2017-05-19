@@ -35,8 +35,9 @@ router.post('/<%- namePlLc -%>/upload_xlsx', <% include ../partials/acl_middlewa
     models.<%- name -%>.bulkCreate(
       xlsxObjs, {
         validate: true
-      })
-      .catch(function(err) {
+      }).then(function(data) {
+        res.json(data)
+      }).catch(function(err) {
         res.json(err)
       })
   });

@@ -13,7 +13,12 @@ router.put('/<%- nameLc -%>/:id', <% include ../partials/acl_middleware %> funct
               <% include ../partials/set_attributes %>
             }).then(function(<%- nameLc -%>) {
                 res.send(<%- nameLc -%>);
-            });
+            }).catch(function(err) {
+              res.json(err)
+            })
+        } else {
+          res.json(new Error('<%- name -%> with id ' + req.params.id +
+            ' not found.'))
         }
     });
 });
