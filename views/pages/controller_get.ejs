@@ -9,7 +9,7 @@ router.get('/<%- namePlLc %>', <% include ../partials/acl_middleware %> function
     <%- namePl %>) {
     res.json(<%- namePl %>);
   }).catch(function(err) {
-    res.json(err)
+    res.status(500).json(err)
   })
 });
 
@@ -23,7 +23,7 @@ router.get('/<%- nameLc %>/:id', <% include ../partials/acl_middleware %> functi
   }).then(function(x) {
     res.json(x);
   }).catch(function(err) {
-    res.json(err)
+    res.status(500).json(err)
   })
 });
 
@@ -43,6 +43,6 @@ router.get('/<%- namePlLc %>/vue_table', <% include ../partials/acl_middleware %
     function(x) {
       res.json(x)
     }).catch(function(err) {
-      res.json(err)
+      res.status(500).json(err)
     })
 });

@@ -14,10 +14,10 @@ router.put('/<%- nameLc -%>/:id', <% include ../partials/acl_middleware %> funct
             }).then(function(<%- nameLc -%>) {
                 res.send(<%- nameLc -%>);
             }).catch(function(err) {
-              res.json(err)
+              res.status(500).json(err)
             })
         } else {
-          res.json(new Error('<%- name -%> with id ' + req.params.id +
+          res.status(500).json(new Error('<%- name -%> with id ' + req.params.id +
             ' not found.'))
         }
     });
