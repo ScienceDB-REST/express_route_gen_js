@@ -4,7 +4,7 @@ Provides commands to auto-generate CRUD routes for models with Expressjs. This i
 ## Usage:
 
 ```
-express_route_gen . --name Todo --attributes 'title:string, complete:boolean'
+express_route_gen . --name Todo --attributes 'title:string, complete:boolean' [--acl n]
 ```
 
 Writes file `server/routes/todo_routes.js` with the standard routes for 
@@ -23,6 +23,7 @@ Usage: express_route_gen [options] <directory>
     -h, --help                       output usage information
     --name <model_name>              The name of the model as provided to 'sequelize model:create'.
     --attributes <model_attributes>  The model attributes as provided to 'sequelize model:create'.
+    --acl <number_of_path_components n>  If and only if this argument is provided the snippet "acl.middleware(n)" will be used to provide authorization guards with the package "acl".
 ```
 ## Adjust your `ExpressJS` routes
 
