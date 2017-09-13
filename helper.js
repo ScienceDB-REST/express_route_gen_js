@@ -44,11 +44,20 @@ exports.search = function(req, strAttributes) {
   return selectOpts;
 }
 
+exports.includeAssociations = function (req) {
+  return req.query.excludeAssociations ? {} : {
+    include: [{
+      all: true
+    }]
+  }
+}
+
 exports.searchPaginate = function(req, strAttributes) {
   return objectAssign(
     exports.search(req, strAttributes),
     exports.sort(req),
-    exports.paginate(req)
+    exports.paginate(req),
+    exports.includeAssociations(req)
   );
 }
 

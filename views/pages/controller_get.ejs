@@ -15,12 +15,14 @@ router.get('/<%- namePlLc %>', <% include ../partials/acl_middleware %> function
 
 // get single <%- name %>
 router.get('/<%- nameLc %>/:id', <% include ../partials/acl_middleware %> function(req, res) {
-  models.
-  <%- name %>.find({
+  w = {
     where: {
       id: req.params.id
     }
-  }).then(function(x) {
+  }
+  i = helper.includeAssociations(req)
+  models.
+  <%- name %>.find(objectAssign(w,i)).then(function(x) {
     res.json(x);
   }).catch(function(err) {
     res.status(500).json(err)
