@@ -148,12 +148,19 @@ exports.prevNextPageUrl = function(req, isPrevious) {
 }
 
 exports.vueTable = function(req, model, strAttributes) {
-  return model.findAll(exports.searchPaginate(req, strAttributes)).then(
-    function(x) {
-      lastPage = math.ceil(x.length / req.query.per_page)
+  search = exports.search(req, strAttributes)
+  searchSortPagIncl = exports.searchPaginate( req, strAttributes )
+  queries = []
+  queries.push(model.findAll(search))
+  queries.push(model.findAll(searchSortPagIncl))
+  return Promise.all(queries).then(
+    function(res) {
+      searchRes = res[0]
+      paginatedSearchRes = res[1]
+      lastPage = math.ceil(searchRes.length / req.query.per_page)
       return {
-        data: x,
-        total: x.length,
+        data: paginatedSearchRes,
+        total: searchRes.length,
         per_page: req.query.per_page,
         current_page: req.query.page,
         'from': (req.query.page - 1) * req.query.per_page + 1,
