@@ -31,10 +31,26 @@ router.get('/<%- nameLc %>/:id', <% include ../partials/acl_middleware %> functi
 
 // get example CSV for subsequent bulk create
 router.get('/<%- namePlLc %>/example_csv', <% include ../partials/acl_middleware %> function(req, res) {
-  helper.modelCsvExample(models.
-    <%- name %>).then(function(modelCsvArr) {
-    res.csv(modelCsvArr)
+  var params = JSON.parse(req.query.array);
+  var fileType = 'csv';
+
+  if('excel' in req.query && req.query.excel){
+        fileType = 'excel';
+  }
+
+  models.
+  <%- name %>.findAll().then(function(<%- namePl %>) {
+    var filteredData = helper.filterNotIn(<%- namePl %>, params);
+    if(fileType === 'excel'){
+      res.csv(filteredData.map(item => item.dataValues), true);
+    }
+    else{
+      res.csv(filteredData.map(item => item.dataValues), true);
+    }
+  }).catch(function(err) {
+    res.status(500).json(err)
   })
+
 })
 
 // get for vue-table

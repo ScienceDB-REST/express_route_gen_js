@@ -173,3 +173,7 @@ exports.vueTable = function(req, model, strAttributes) {
       }
     })
 }
+
+exports.filterNotIn = function(modelObj, params) {
+  return modelObj.filter(item => !params.includes(item.id));
+}
