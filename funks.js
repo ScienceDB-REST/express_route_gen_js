@@ -27,5 +27,7 @@ exports.typeAttributes = function(attributesArray) {
     if (!y[x[1]]) y[x[1]] = [x[0]]
     else y[x[1]] = y[x[1]].concat([x[0]])
   })
+
+  y.string.push("id")
   return y;
 }
