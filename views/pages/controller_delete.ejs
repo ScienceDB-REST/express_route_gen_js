@@ -1,11 +1,14 @@
 //
 // DELETE REQUESTS
 //
-// delete a single <%- nameLc %>
-router.delete('/<%- nameLc -%>/:id', <% include ../partials/acl_middleware %> function(req, res) {
+// delete a <%- name %> or <%- namePlLc %>
+router.delete('/<%- nameLc -%>/(:arr)*', <% include ../partials/acl_middleware %> function(req, res) {
+
+    var params = [req.params.arr].concat(req.params[0].split('/').slice(1));
+
     models.<%- name -%>.destroy({
         where: {
-            id: req.params.id
+            id: params
         }
     }).then(function(<%- nameLc -%>) {
         res.json(<%- nameLc -%>);

@@ -44,11 +44,14 @@ router.get('/<%- namePlLc %>/example_csv', <% include ../partials/acl_middleware
             id: params
         }
     }).then(function(<%- namePl %>) {
-    if(fileType === 'excel'){
+    if(fileType !== 'excel'){
+      res.set('Content-Disposition', 'filename="' + '<%- name %>' + '.csv"');
       res.csv(<%- namePl %>.map(item => item.dataValues), true);
     }
     else{
-      res.csv(<%- namePl %>.map(item => item.dataValues), true);
+      var workbook = new excel.Workbook();
+      var worksheet = workbook.addWorksheet('<%- namePl %>');
+      helper.sendExcel(<%- namePl %>.map(item => item.dataValues), res, workbook, worksheet, tempfile('.xlsx'), '<%- name %>');
     }
   }).catch(function(err) {
     res.status(500).json(err)
@@ -59,10 +62,21 @@ router.get('/<%- namePlLc %>/example_csv', <% include ../partials/acl_middleware
 router.get('/<%- namePlLc %>/vue_table', <% include ../partials/acl_middleware %> function(req, res) {
   helper.vueTable(req, models.
     <%- name%>,
-    <%- JSON.stringify(typeAttributes['string'] || []) %>).then(
+    <%- JSON.stringify(typeAttributesTable['string'] || []) %>).then(
     function(x) {
       res.json(x)
     }).catch(function(err) {
       res.status(500).json(err)
     })
+});
+
+// get <%- name %> Data-Model definition 
+router.get('/<%- namePlLc %>/definition', function(req, res) {
+    models.
+    <%- name %>.findAll().then(function(<%- namePl %>) {
+        var modelData = helper.dataModel(<%- namePl %>);
+        res.json(modelData);
+    }).catch(function(err) {
+        res.status(500).json(err)
+    });
 });

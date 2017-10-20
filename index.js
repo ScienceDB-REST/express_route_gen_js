@@ -30,7 +30,8 @@ program
       namePl: inflection.pluralize(program.name),
       namePlLc: inflection.pluralize(program.name).toLowerCase(),
       attributesArr: funks.attributesArray(program.attributes),
-      typeAttributes: funks.typeAttributes(funks.attributesArray(program.attributes)),
+      typeAttributes: funks.typeAttributes(funks.attributesArray(program.attributes), false),
+      typeAttributesTable: funks.typeAttributes(funks.attributesArray(program.attributes), true),
       acl: ( program.acl || 0 )
     }
     var routesDir = directory + '/server/routes';

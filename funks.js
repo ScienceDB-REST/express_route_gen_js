@@ -21,11 +21,16 @@ exports.attributesArray = function(attributesStr) {
 // Collect attributes into a map with keys the attributes' types and values the
 // attributes' names: { 'string': [ 'name', 'last_name' ], 'boolean': [
 // 'is_human' ] }
-exports.typeAttributes = function(attributesArray) {
+exports.typeAttributes = function(attributesArray, hasId) {
   y = {};
   attributesArray.forEach(function(x) {
     if (!y[x[1]]) y[x[1]] = [x[0]]
     else y[x[1]] = y[x[1]].concat([x[0]])
   })
+
+  if(hasId){
+    y.string.push('id')
+  }
+
   return y;
 }

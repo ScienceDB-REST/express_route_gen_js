@@ -1,0 +1,6 @@
+<% for ( i=0; i<attributesArr.length; i++ ) { -%>
+    <%- attributesArr[i][0] -%>: null -%>
+		<% if ( i < (attributesArr.length - 1 ) ) { -%>
+			,
+    <% } -%>
+<% } -%>

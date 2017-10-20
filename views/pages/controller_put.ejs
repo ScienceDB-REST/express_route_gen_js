@@ -9,9 +9,9 @@ router.put('/<%- nameLc -%>/:id', <% include ../partials/acl_middleware %> funct
         }
     }).then(function(<%- nameLc -%>) {
         if (<%- nameLc -%>) {
-            <%- nameLc -%>.updateAttributes({
-              <% include ../partials/set_attributes %>
-            }).then(function(<%- nameLc -%>) {
+            <%- nameLc -%>.updateAttributes(helper.assignForIntersectedKeys({
+                <% include ../partials/set_attributes_for_put %>
+            }, req.body)).then(function(<%- nameLc -%>) {
                 res.send(<%- nameLc -%>);
             }).catch(function(err) {
               res.status(500).json(err)
