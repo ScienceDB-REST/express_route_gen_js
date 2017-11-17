@@ -33,25 +33,24 @@ exports.search = function(req, strAttributes) {
     fieldClauses = []
     strAttributes.forEach(function(x) {
       fieldWhereClause = {}
-      if(x !== "id"){
+      if (x !== "id") {
         fieldWhereClause[x] = {
           $like: "%" + req.query.filter + "%"
         }
         fieldClauses = fieldClauses.concat([fieldWhereClause])
-      }
-      else{        
-        if(/^\d+$/.test(req.query.filter)){
+      } else {
+        if (/^\d+$/.test(req.query.filter)) {
           fieldWhereClause[x] = req.query.filter
-
           fieldClauses = fieldClauses.concat([fieldWhereClause])
-        }        
+        }
       }
-      
     })
     selectOpts['where'] = {
       $or: fieldClauses
     }
   }
+}
+
 
 exports.includeAssociations = function (req) {
   return req.query.excludeAssociations ? {} : {
