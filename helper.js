@@ -49,6 +49,7 @@ exports.search = function(req, strAttributes) {
       $or: fieldClauses
     }
   }
+  return selectOpts
 }
 
 
