@@ -22,10 +22,13 @@ exports.attributesArray = function(attributesStr) {
 // attributes' names: { 'string': [ 'name', 'last_name' ], 'boolean': [
 // 'is_human' ] }
 exports.typeAttributes = function(attributesArray) {
-  y = {};
+  y = {
+    string: ['id']
+  }
   attributesArray.forEach(function(x) {
     if (!y[x[1]]) y[x[1]] = [x[0]]
     else y[x[1]] = y[x[1]].concat([x[0]])
   })
+
   return y;
 }

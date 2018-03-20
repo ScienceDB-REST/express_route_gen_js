@@ -3,9 +3,9 @@
 //
 // add new <%- name %>
 router.post('/<%- namePlLc -%>', <% include ../partials/acl_middleware %> function(req, res) {
-    models.<%- name -%>.create({
-				<% include ../partials/set_attributes %>
-    }).then(function(<%- name %>) {
+    models.<%- name -%>.create(helper.assignForIntersectedKeys({
+				<% include ../partials/set_attributes_for_update %>
+    }, req.body)).then(function(<%- name %>) {
         res.json(<%- name -%>);
     }).catch(function(err) {
         res.status(500).json(err)

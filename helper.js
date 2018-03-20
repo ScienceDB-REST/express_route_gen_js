@@ -3,6 +3,7 @@ const math = require('mathjs');
 const XLSX = require('xlsx');
 const Promise = require('bluebird');
 const csv_parse = Promise.promisify(require('csv-parse'));
+const _ = require('lodash');
 
 var exports = module.exports = {};
 
@@ -32,17 +33,25 @@ exports.search = function(req, strAttributes) {
     fieldClauses = []
     strAttributes.forEach(function(x) {
       fieldWhereClause = {}
-      fieldWhereClause[x] = {
-        $like: "%" + req.query.filter + "%"
+      if (x !== "id") {
+        fieldWhereClause[x] = {
+          $like: "%" + req.query.filter + "%"
+        }
+        fieldClauses = fieldClauses.concat([fieldWhereClause])
+      } else {
+        if (/^\d+$/.test(req.query.filter)) {
+          fieldWhereClause[x] = req.query.filter
+          fieldClauses = fieldClauses.concat([fieldWhereClause])
+        }
       }
-      fieldClauses = fieldClauses.concat([fieldWhereClause])
     })
     selectOpts['where'] = {
       $or: fieldClauses
     }
   }
-  return selectOpts;
+  return selectOpts
 }
+
 
 exports.includeAssociations = function (req) {
   return req.query.excludeAssociations ? {} : {
@@ -173,3 +182,8 @@ exports.vueTable = function(req, model, strAttributes) {
       }
     })
 }
+
+exports.assignForIntersectedKeys = function(options, body) {
+  var updated = _.pick(body, _.keys(options));
+  return updated;
+};
