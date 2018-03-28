@@ -1,18 +1,19 @@
 var unique = require('array-unique');
-var exports = module.exports = {};
+const {promisify} = require('util');
+const ejsRenderFile = promisify( ejs.renderFile )
 
 // Generate the controller Javascript using EJS templates
-exports.generateJs = function(templateName, options) {
-  return ejs.renderFile(exprRouteGenPath + '/views/pages/' + templateName +
-    '.ejs', options, {},
-    function(err, str) {
-      return jsb(str);
-    });
+module.exports.generateJs = async function(templateName, options) {
+  let renderedStr = await ejsRenderFile(exprRouteGenPath + '/views/pages/' +
+    templateName +
+    '.ejs', options, {})
+  let prettyStr = jsb(renderedStr)
+  return prettyStr;
 }
 
 // Parse input 'attributes' argument into array of arrays:
 // [ [ 'name':'string' ], [ 'is_human':'boolean' ] ]
-exports.attributesArray = function(attributesStr) {
+module.exports.attributesArray = function(attributesStr) {
   return attributesStr.trim().split(/[\s,]+/).map(function(x) {
     return x.trim().split(':')
   });
@@ -21,7 +22,7 @@ exports.attributesArray = function(attributesStr) {
 // Collect attributes into a map with keys the attributes' types and values the
 // attributes' names: { 'string': [ 'name', 'last_name' ], 'boolean': [
 // 'is_human' ] }
-exports.typeAttributes = function(attributesArray) {
+module.exports.typeAttributes = function(attributesArray) {
   y = {
     string: ['id']
   }

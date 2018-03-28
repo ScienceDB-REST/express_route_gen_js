@@ -187,3 +187,41 @@ exports.assignForIntersectedKeys = function(options, body) {
   var updated = _.pick(body, _.keys(options));
   return updated;
 };
+
+/**
+ * @async
+ * @function setAssociations
+ *
+ * Extracts persistent instances of associated objects from a HttpRequest Body
+ * and sets these associations in the argument modelInstance.
+ *
+ * @arg {object} modelAssociations Keys are expected to be association names
+ * and values Sequelize association objects. Obtain this argument by calling
+ * <pre><code>myModelClass.associations</code></pre>. 
+ * @arg {object} modelInstance An instance of a persistent model, eg. obtained
+ * by calling <pre><code>myModelClass.findById(1)</code></pre>.
+ * @arg {object} body The HttpRequest Body as received by express server.
+ *
+ * @returns {undefined}
+ */
+exports.setAssociations = async function(modelAssociations, modelInstance, body) {
+  Object.keys(modelAssociations).forEach(function(assocName) {
+    if (assocName in body) {
+      let assocIds = body[assocName].map((x) => {
+        return x.id
+      })
+      if (assocIds !== undefined && assocIds !== null && Array.isArray(
+          assocIds)) {
+        let assocInstances = await modelAssociations[assocName].target.find({
+          where: {
+            id: assocIds
+          }
+        })
+        await modelInstance[
+            `set${assocName[0].toUpperCase()}${x.substring(1,x.length)}`]
+          (
+            assocInstances)
+      }
+    }
+  })
+}
