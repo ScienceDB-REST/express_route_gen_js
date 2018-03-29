@@ -6,12 +6,19 @@ router.put('/<%- nameLc -%>/:id', <% include ../partials/acl_middleware %> funct
     models.<%- name -%>.find({
         where: {
             id: req.params.id
-        }
+        },
+        include: [{all: true}]
     }).then(function(<%- nameLc -%>) {
         if (<%- nameLc -%>) {
             <%- nameLc -%>.updateAttributes(helper.assignForIntersectedKeys({
 				<% include ../partials/set_attributes_for_update %>
             }, req.body)).then(function(<%- nameLc -%>) {
+              return helper.setAssociations(
+                models.<%- name -%>,
+                <%- nameLc -%>,
+                req.body
+              )
+            }).then(function(<%- nameLc -%>) {
                 res.send(<%- nameLc -%>);
             }).catch(function(err) {
               res.status(500).json(err)

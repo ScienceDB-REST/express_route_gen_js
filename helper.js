@@ -189,39 +189,55 @@ exports.assignForIntersectedKeys = function(options, body) {
 };
 
 /**
- * @async
  * @function setAssociations
  *
  * Extracts persistent instances of associated objects from a HttpRequest Body
  * and sets these associations in the argument modelInstance.
  *
- * @arg {object} modelAssociations Keys are expected to be association names
- * and values Sequelize association objects. Obtain this argument by calling
- * <pre><code>myModelClass.associations</code></pre>. 
+ * @arg {object} The Sequelize class of argument modelInstance. 
  * @arg {object} modelInstance An instance of a persistent model, eg. obtained
  * by calling <pre><code>myModelClass.findById(1)</code></pre>.
  * @arg {object} body The HttpRequest Body as received by express server.
  *
- * @returns {undefined}
+ * @returns {object} The argument modelInstance, updated to hold the set
+ * associations.
  */
-exports.setAssociations = async function(modelAssociations, modelInstance, body) {
-  Object.keys(modelAssociations).forEach(function(assocName) {
+async function setAssociations(modelClass, modelInstance, body) {
+  let modelAssociations = modelClass.associations;
+  var anyAssocSet = false;
+  await Promise.map(Object.keys(modelAssociations), async function(assocName) {
     if (assocName in body) {
       let assocIds = body[assocName].map((x) => {
         return x.id
       })
       if (assocIds !== undefined && assocIds !== null && Array.isArray(
           assocIds)) {
-        let assocInstances = await modelAssociations[assocName].target.find({
-          where: {
-            id: assocIds
-          }
-        })
+        anyAssocSet = true;
+        let assocInstances = await modelAssociations[assocName].target
+          .findAll({
+            where: {
+              id: assocIds
+            }
+          })
         await modelInstance[
-            `set${assocName[0].toUpperCase()}${x.substring(1,x.length)}`]
+            `set${assocName[0].toUpperCase()}${assocName.substring(1,assocName.length)}`
+          ]
           (
             assocInstances)
       }
     }
   })
+  return anyAssocSet ?
+    await modelClass.findById(
+      modelInstance.id, {
+        include: [{
+          all: true
+        }]
+      }
+    ) : modelInstance;
 }
+
+// See 
+// https://stackoverflow.com/questions/46715484/correct-async-function-export-in-node-js?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+// to explain, why function setAssociations is exported as follows:
+exports.setAssociations = setAssociations;

@@ -6,6 +6,12 @@ router.post('/<%- namePlLc -%>', <% include ../partials/acl_middleware %> functi
     models.<%- name -%>.create(helper.assignForIntersectedKeys({
 				<% include ../partials/set_attributes_for_update %>
     }, req.body)).then(function(<%- name %>) {
+        return helper.setAssociations(
+          models.<%- name -%>,
+          <%- name -%>,
+          req.body
+        )
+    }).then(function(<%- name %>) {
         res.json(<%- name -%>);
     }).catch(function(err) {
         res.status(500).json(err)

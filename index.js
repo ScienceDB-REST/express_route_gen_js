@@ -1,3 +1,6 @@
+#!/usr/bin/env node
+
+
 // Required packages:
 path = require('path');
 inflection = require('inflection');
