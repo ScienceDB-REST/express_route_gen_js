@@ -115,12 +115,14 @@ exports.modelCsvExample = function(model, discardAttrs) {
 }
 
 exports.parseCsv = function(csvStr, delim, cols) {
-    if (!delim) delim = ","
-    if (typeof cols === 'undefined') cols = true
-    return csv_parse(csvStr, {
+  if (!delim) delim = ","
+  if (typeof cols === 'undefined') cols = true
+  return exports.replaceNullStringsWithLiteralNulls(
+    csv_parse(csvStr, {
       delimiter: delim,
       columns: cols
     })
+  )
 }
 
 exports.parseXlsx = function(bstr) {
@@ -128,16 +130,28 @@ exports.parseXlsx = function(bstr) {
     type: "binary"
   });
   var sheet_name_list = workbook.SheetNames;
-  return XLSX.utils.sheet_to_json(workbook.Sheets[sheet_name_list[0]]);
+  return exports.replaceNullStringsWithLiteralNulls(
+    XLSX.utils.sheet_to_json(
+      workbook.Sheets[sheet_name_list[0]])
+  );
 }
 
+exports.replaceNullStringsWithLiteralNulls = function(arrOfObjs) {
+  return arrOfObjs.map(function(csvRow) {
+    Object.keys(csvRow).forEach(function(csvCol) {
+      csvCell = csvRow[csvCol]
+      csvRow[csvCol] = csvCell === 'null' || csvCell === 'NULL' ?
+        null : csvCell
+    })
+    return csvRow
+  })
+}
 exports.requestedUrl = function(req) {
   var port = req.app.settings.port || cfg.port;
   return req.protocol + '://' + req.hostname +
     (port == 80 || port == 443 ? '' : ':' + port) +
     req.path;
 }
-
 exports.prevNextPageUrl = function(req, isPrevious) {
   baseUrl = exports.requestedUrl(req).replace(/\?.*$/, '')
   query = []
