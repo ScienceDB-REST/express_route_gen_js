@@ -4,6 +4,7 @@ const XLSX = require('xlsx');
 const Promise = require('bluebird');
 const csv_parse = Promise.promisify(require('csv-parse'));
 const _ = require('lodash');
+const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
 
 var exports = module.exports = {};
 
@@ -255,3 +256,25 @@ async function setAssociations(modelClass, modelInstance, body) {
 // https://stackoverflow.com/questions/46715484/correct-async-function-export-in-node-js?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 // to explain, why function setAssociations is exported as follows:
 exports.setAssociations = setAssociations;
+
+/**
+ * Create a CSV string to be downloadable as a table representation of all
+ * objects of a data model.
+ *
+ * @param {object} model - The data model class 
+ *
+ * @returns {string} The CSV table
+ */
+exports.csvExport = async function(model) {
+  let modAttrs = await exports.filterModelAttributesForCsv(model)
+  let csvHeader = modAttrs.map(function(ma) {
+    return { id: ma.column_name, title: ma.column_name }
+  })
+  let csvStringifier = createCsvStringifier({
+    header: csvHeader
+  })
+  let records = await model.findAll()
+  let csvHeadStr = csvStringifier.getHeaderString()
+  let csvContStr = csvStringifier.stringifyRecords(records)
+  return `${csvHeadStr}${csvContStr}`
+}
