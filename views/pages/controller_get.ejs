@@ -37,6 +37,14 @@ router.get('/<%- namePlLc %>/example_csv', <% include ../partials/acl_middleware
   })
 })
 
+// get CSV of all <%- namePl %>
+router.get('/<%- namePlLc %>/csv_export', <% include ../partials/acl_middleware %> function(req, res) {
+  helper.csvExport(models.<%- name %>).then(function(csvStr) {
+    res.set({'Content-Disposition': 'attachment; filename=<%- namePlLc %>.csv','Content-type': 'text/csv'})
+    res.send(csvStr)
+  })
+})
+
 // get for vue-table
 router.get('/<%- namePlLc %>/vue_table', <% include ../partials/acl_middleware %> function(req, res) {
   helper.vueTable(req, models.
