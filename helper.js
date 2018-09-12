@@ -118,11 +118,13 @@ exports.modelCsvExample = function(model, discardAttrs) {
 exports.parseCsv = function(csvStr, delim, cols) {
   if (!delim) delim = ","
   if (typeof cols === 'undefined') cols = true
-  return exports.replaceNullStringsWithLiteralNulls(
-    csv_parse(csvStr, {
-      delimiter: delim,
-      columns: cols
-    })
+  return exports.convertNumbers(
+    exports.replaceNullStringsWithLiteralNulls(
+      csv_parse(csvStr, {
+        delimiter: delim,
+        columns: cols
+      })
+    )
   )
 }
 
@@ -131,10 +133,12 @@ exports.parseXlsx = function(bstr) {
     type: "binary"
   });
   var sheet_name_list = workbook.SheetNames;
-  return exports.replaceNullStringsWithLiteralNulls(
-    XLSX.utils.sheet_to_json(
-      workbook.Sheets[sheet_name_list[0]])
-  );
+  return exports.convertNumbers(
+    exports.replaceNullStringsWithLiteralNulls(
+      XLSX.utils.sheet_to_json(
+        workbook.Sheets[sheet_name_list[0]])
+    )
+  )
 }
 
 exports.replaceNullStringsWithLiteralNulls = function(arrOfObjs) {
@@ -277,4 +281,31 @@ exports.csvExport = async function(model) {
   let csvHeadStr = csvStringifier.getHeaderString()
   let csvContStr = csvStringifier.stringifyRecords(records)
   return `${csvHeadStr}${csvContStr}`
+}
+
+/**
+ * The plain old Javascript objects (POJOs) in the argument array
+ * 'arrayOfParsedObjs' are each inspected. All string values that are valid
+ * numbers are converted to numbers using Number(value). 'valid number' is
+ * inferred using Number.isNaN( Number(value) ).
+ *
+ * @param {array} arrayOfParsedObjs - An array of POJOs
+ *
+ * @returns {array} An array of clones of the argument 'arrayOfParsedObjs' in
+ * which each POJOs valid Numbers are converted to Numbers. Returns null, if
+ * the argument 'arrayOfParsedObjs' is not an Array.
+ */
+exports.convertNumbers = function(arrayOfParsedObjs) {
+  if (Array.isArray(arrayOfParsedObjs)) {
+    return arrayOfParsedObjs.map(function(x) {
+      pojo = Object.assign({}, x)
+      Object.keys(pojo).forEach(function(key) {
+        if (typeof pojo[key] === 'string' && !Number.isNaN(Number(
+            pojo[key]))) {
+          pojo[key] = Number(pojo[key])
+        }
+      })
+      return pojo
+    })
+  }
 }
