@@ -175,16 +175,16 @@ exports.vueTable = function(req, model, strAttributes) {
   search = exports.search(req, strAttributes)
   searchSortPagIncl = exports.searchPaginate( req, strAttributes )
   queries = []
-  queries.push(model.findAll(search))
+  queries.push(model.count(search))
   queries.push(model.findAll(searchSortPagIncl))
   return Promise.all(queries).then(
     function(res) {
       searchRes = res[0]
       paginatedSearchRes = res[1]
-      lastPage = math.ceil(searchRes.length / req.query.per_page)
+      lastPage = math.ceil(searchRes / req.query.per_page)
       return {
         data: paginatedSearchRes,
-        total: searchRes.length,
+        total: searchRes,
         per_page: req.query.per_page,
         current_page: req.query.page,
         'from': (req.query.page - 1) * req.query.per_page + 1,
