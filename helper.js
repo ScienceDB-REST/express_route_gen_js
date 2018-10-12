@@ -1,10 +1,14 @@
 const objectAssign = require('object-assign');
 const math = require('mathjs');
 const XLSX = require('xlsx');
+//const XlsxStreamReader = require("xlsx-stream-reader");
 const Promise = require('bluebird');
-const csv_parse = Promise.promisify(require('csv-parse'));
+const csv_parse = require('csv-parse');
+const promisifiedCsvParse = Promise.promisify(csv_parse);
 const _ = require('lodash');
 const createCsvStringifier = require('csv-writer').createObjectCsvStringifier;
+const fs = require('fs')
+const awaitifyStream = require('awaitify-stream')
 
 var exports = module.exports = {};
 
@@ -54,7 +58,7 @@ exports.search = function(req, strAttributes) {
 }
 
 
-exports.includeAssociations = function (req) {
+exports.includeAssociations = function(req) {
   return req.query.excludeAssociations ? {} : {
     include: [{
       all: true
@@ -119,11 +123,47 @@ exports.parseCsv = function(csvStr, delim, cols) {
   if (!delim) delim = ","
   if (typeof cols === 'undefined') cols = true
   return exports.replaceNullStringsWithLiteralNulls(
-    csv_parse(csvStr, {
+    promisifiedCsvParse(csvStr, {
       delimiter: delim,
       columns: cols
     })
   )
+}
+
+exports.parseCsvStream = async function(csvFilePath, model, delim, cols) {
+  if (!delim) delim = ","
+  if (typeof cols === 'undefined') cols = true
+  // Wrap all database actions within a transaction:
+  let transaction = await model.sequelize.transaction()
+  try {
+    // Pipe a file read-stream through a CSV-Reader and make the records
+    // handleable asynchronously:
+    let csvStream = awaitifyStream.createReader(
+      fs.createReadStream(csvFilePath).pipe(
+        csv_parse({
+          delimiter: delim,
+          columns: cols
+        })
+      )
+    )
+    
+    let record
+    while (null !== (record = await csvStream.readAsync())) {
+      await model.create(record, {
+        transaction: transaction
+      }).catch(error => {
+        // Enable identification of those rows / records that caused validation
+        // errors:
+        error.record = record
+        throw error
+      })
+    }
+
+    await transaction.commit()
+  } catch (error) {
+    await transaction.rollback()
+    throw error
+  }
 }
 
 exports.parseXlsx = function(bstr) {
@@ -173,7 +213,7 @@ exports.prevNextPageUrl = function(req, isPrevious) {
 
 exports.vueTable = function(req, model, strAttributes) {
   search = exports.search(req, strAttributes)
-  searchSortPagIncl = exports.searchPaginate( req, strAttributes )
+  searchSortPagIncl = exports.searchPaginate(req, strAttributes)
   queries = []
   queries.push(model.count(search))
   queries.push(model.findAll(searchSortPagIncl))
@@ -268,7 +308,10 @@ exports.setAssociations = setAssociations;
 exports.csvExport = async function(model) {
   let modAttrs = await exports.filterModelAttributesForCsv(model)
   let csvHeader = modAttrs.map(function(ma) {
-    return { id: ma.column_name, title: ma.column_name }
+    return {
+      id: ma.column_name,
+      title: ma.column_name
+    }
   })
   let csvStringifier = createCsvStringifier({
     header: csvHeader
