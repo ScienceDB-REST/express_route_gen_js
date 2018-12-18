@@ -1,3 +1,6 @@
+# :no_entry: DEPRECATED 
+The restful approach for ScienceDB has been changed to graphql approach for new versions visit [this site](https://github.com/ScienceDb)
+
 # express_route_gen_js
 Provides commands to auto-generate CRUD routes for models with Expressjs. This is Ruby-on-Rails or SailsJS like controller scaffolding. See [this blog](http://mherman.org/blog/2015/10/22/node-postgres-sequelize/#.WDcA0qIrLVr) for more details.
 
